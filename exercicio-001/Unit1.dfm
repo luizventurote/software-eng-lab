@@ -14,6 +14,7 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -74,8 +75,6 @@ object Form1: TForm1
     Width = 249
     Height = 21
     TabOrder = 0
-    OnEnter = ChangeColor
-    OnExit = EditExit
   end
   object Fechar: TButton
     Left = 8
@@ -102,8 +101,6 @@ object Form1: TForm1
     Width = 249
     Height = 21
     TabOrder = 1
-    OnEnter = ChangeColor
-    OnExit = EditExit
   end
   object EditPhone: TEdit
     Left = 8
@@ -111,8 +108,6 @@ object Form1: TForm1
     Width = 249
     Height = 21
     TabOrder = 3
-    OnEnter = ChangeColor
-    OnExit = EditExit
   end
   object EditBirthday: TEdit
     Left = 8
@@ -120,8 +115,6 @@ object Form1: TForm1
     Width = 145
     Height = 21
     TabOrder = 4
-    OnEnter = ChangeColor
-    OnExit = EditExit
   end
   object Memo1: TMemo
     Left = 8

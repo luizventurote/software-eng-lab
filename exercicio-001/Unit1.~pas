@@ -20,11 +20,10 @@ type
     Label4: TLabel;
     Memo1: TMemo;
     procedure FecharClick(Sender: TObject);
-    procedure ChangeColor(Sender: TObject);
-    procedure EditExit(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    procedure ChangeFocus(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -42,16 +41,6 @@ begin
   Form1.Close;
 end;
 
-procedure TForm1.ChangeColor(Sender: TObject);
-begin
-  TEdit(Sender).Color := $DCF8FF;
-end;
-
-procedure TForm1.EditExit(Sender: TObject);
-begin
-  TEdit(Sender).Color := clWindow;
-end;
-
 procedure TForm1.Button1Click(Sender: TObject);
 begin
   Memo1.Lines.Add(Form1.EditName.Text + ' - ' + Form1.EditAddress.Text + ' - ' + Form1.EditPhone.Text + ' - ' + Form1.EditBirthday.Text);
@@ -65,6 +54,40 @@ begin
   // Set form focus to edit name
   Form1.EditName.SetFocus;
 
+end;
+
+// Altera a cor do foco do edit
+procedure TForm1.ChangeFocus(Sender: TObject);
+var
+  index: integer;
+  edit: TEdit;
+begin
+  for index := 0 to ComponentCount - 1 do
+    // Verifica se é do tipo TEdit
+    if Components[index] is TEdit then
+    begin
+      // Faz um type-casting (Conversão de tipos) pata o tipo TEdit
+      edit := Components[index] as TEdit;
+
+      // Verifica se o Edit está com foco
+      if edit.Focused then
+        edit.Color := $DCF8FF
+      else
+        edit.Color := clWindow;
+    end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  index: integer;
+begin
+
+  // Faz referência de uma procedure em um evento
+  for index := 0 to ComponentCount - 1 do
+    if Components[index] is TEdit then
+      begin
+      (Components[index] as TEdit).OnEnter := ChangeFocus;
+      end;
 end;
 
 end.
