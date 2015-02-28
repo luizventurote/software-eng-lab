@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 445
-  Top = 206
-  Width = 856
-  Height = 564
+  Left = 548
+  Top = 274
+  Width = 858
+  Height = 571
   Caption = 'Delphi Media Player'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -25,6 +25,17 @@ object Form1: TForm1
     Caption = 'Screen'
     Color = clBackground
     TabOrder = 0
+    object FileInfoBox: TRichEdit
+      Left = 8
+      Top = 344
+      Width = 353
+      Height = 41
+      ReadOnly = True
+      ScrollBars = ssHorizontal
+      TabOrder = 0
+      Visible = False
+      WordWrap = False
+    end
   end
   object PlayList: TListBox
     Left = 648
@@ -72,8 +83,8 @@ object Form1: TForm1
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 487
-    Width = 840
+    Top = 494
+    Width = 842
     Height = 19
     Panels = <>
   end
@@ -123,21 +134,23 @@ object Form1: TForm1
     TabOrder = 11
     OnClick = BtnNextClick
   end
-  object Button1: TButton
+  object BtnUpPlaylist: TButton
     Left = 648
     Top = 328
     Width = 57
     Height = 33
     Caption = 'Up'
     TabOrder = 12
+    OnClick = BtnUpPlaylistClick
   end
-  object Button2: TButton
+  object BtnDownPlaylist: TButton
     Left = 712
     Top = 328
     Width = 57
     Height = 33
     Caption = 'Down'
     TabOrder = 13
+    OnClick = BtnDownPlaylistClick
   end
   object BtnRemovePlayList: TButton
     Left = 776
@@ -147,6 +160,14 @@ object Form1: TForm1
     Caption = 'X'
     TabOrder = 14
     OnClick = BtnRemovePlayListClick
+  end
+  object RandomPlay: TCheckBox
+    Left = 736
+    Top = 432
+    Width = 89
+    Height = 49
+    Caption = 'Random order'
+    TabOrder = 15
   end
   object OpenDialogBox: TOpenDialog
     Filter = 'Music file|*.mp3|VIdeo file|*.avi;*mp4'

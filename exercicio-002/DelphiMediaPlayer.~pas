@@ -24,8 +24,11 @@ type
     Info1: TMenuItem;
     Exit1: TMenuItem;
     Timer1: TTimer;
-    Button1: TButton;
+    BtnPrior: TButton;
     BtnNext: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    BtnRemovePlayList: TButton;
     procedure BtnAddFileClick(Sender: TObject);
     procedure BtnPlayClick(Sender: TObject);
     procedure BtnStopClick(Sender: TObject);
@@ -37,6 +40,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure BtnPauseClick(Sender: TObject);
     procedure BtnNextClick(Sender: TObject);
+    procedure BtnPriorClick(Sender: TObject);
+    procedure BtnRemovePlayListClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -191,11 +196,68 @@ begin
     end
   else
     begin
-     PlayList.ItemIndex := 0;
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[0];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := 0;
     end;
 
+end;
 
+procedure TForm1.BtnPriorClick(Sender: TObject);
+begin
+  if PlayList.ItemIndex > 0 then
+    begin
 
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[PlayList.ItemIndex-1];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := PlayList.ItemIndex-1;
+    end
+  else
+    begin
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[PlayList.Items.Count-1];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := PlayList.Items.Count-1;
+    end;
+end;
+
+procedure TForm1.BtnRemovePlayListClick(Sender: TObject);
+begin
+  PlayList.Items.Delete(PlayList.ItemIndex);
 end;
 
 end.
