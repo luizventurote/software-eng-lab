@@ -65,8 +65,9 @@ uses Math;
 // Play File
 function PlayFile(): integer;
 begin
+  Form1.MediaPlayer.DisplayRect := Rect(0, 0, Form1.Screen.Width, Form1.Screen.Height);
+  Form1.MediaPlayer.Display := Form1.Screen;
   Form1.MediaPlayer.Play;
-  Form1.MediaPlayer.DisplayRect := Form1.Screen.ClientRect;
   Form1.Timer1.Enabled := true;
 
   // Enable Pause and Stop buttons
@@ -314,18 +315,22 @@ begin
   if not (FileInfoBox.Lines.Strings[0] = '') then
   begin
 
-    MediaPlayer.FileName := FileInfoBox.Lines.Strings[0];
-    MediaPlayer.Open;
-    MediaPlayer.Position := StrToInt(FileInfoBox.Lines.Strings[1]);
-    StatusBar.SimpleText := MediaPlayer.FileName;
+    if PlayList.Items.Count > 0 then
+    begin
+      MediaPlayer.FileName := FileInfoBox.Lines.Strings[0];
+      MediaPlayer.Open;
+      MediaPlayer.Position := StrToInt(FileInfoBox.Lines.Strings[1]);
+      StatusBar.SimpleText := MediaPlayer.FileName;
 
-    // Init progress bar status
-    TimeLine.Min :=0 ;
-    TimeLine.Max := MediaPlayer.Length;
-    TimeLine.Position := StrToInt(FileInfoBox.Lines.Strings[1]);
+      // Init progress bar status
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+      TimeLine.Position := StrToInt(FileInfoBox.Lines.Strings[1]);
 
-    // Play
-    PlayFile();
+      // Play
+      PlayFile();
+    end;
+
   end;
 
 end;

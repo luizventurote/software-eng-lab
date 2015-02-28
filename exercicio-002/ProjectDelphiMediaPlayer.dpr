@@ -8,6 +8,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Delphi Media Player';
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
