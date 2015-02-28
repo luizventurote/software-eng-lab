@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 377
-  Top = 166
-  Width = 847
+  Left = 445
+  Top = 206
+  Width = 848
   Height = 564
   Caption = 'Delphi Media Player'
   Color = clBtnFace
@@ -12,6 +12,8 @@ object Form1: TForm1
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Screen: TPanel
@@ -71,16 +73,15 @@ object Form1: TForm1
   object StatusBar: TStatusBar
     Left = 0
     Top = 487
-    Width = 831
+    Width = 832
     Height = 19
     Panels = <>
   end
   object MediaPlayer: TMediaPlayer
-    Left = 568
-    Top = 440
+    Left = 376
+    Top = 360
     Width = 253
     Height = 30
-    Visible = False
     TabOrder = 7
   end
   object BtnPause: TButton
@@ -91,6 +92,7 @@ object Form1: TForm1
     Caption = 'Pause'
     Enabled = False
     TabOrder = 8
+    OnClick = BtnPauseClick
   end
   object BtnLoad: TButton
     Left = 8
@@ -100,6 +102,23 @@ object Form1: TForm1
     Caption = 'Load'
     TabOrder = 9
     OnClick = BtnLoadClick
+  end
+  object Button1: TButton
+    Left = 328
+    Top = 432
+    Width = 75
+    Height = 49
+    Caption = '< Prior'
+    TabOrder = 10
+  end
+  object BtnNext: TButton
+    Left = 408
+    Top = 432
+    Width = 75
+    Height = 49
+    Caption = 'Next >'
+    TabOrder = 11
+    OnClick = BtnNextClick
   end
   object OpenDialogBox: TOpenDialog
     Filter = 'Music file|*.mp3|VIdeo file|*.avi;*mp4'

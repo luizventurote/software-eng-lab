@@ -24,6 +24,11 @@ type
     Info1: TMenuItem;
     Exit1: TMenuItem;
     Timer1: TTimer;
+    BtnPrior: TButton;
+    BtnNext: TButton;
+    Button1: TButton;
+    Button2: TButton;
+    BtnRemovePlayList: TButton;
     procedure BtnAddFileClick(Sender: TObject);
     procedure BtnPlayClick(Sender: TObject);
     procedure BtnStopClick(Sender: TObject);
@@ -31,6 +36,12 @@ type
     procedure Exit1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure BtnLoadClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure BtnPauseClick(Sender: TObject);
+    procedure BtnNextClick(Sender: TObject);
+    procedure BtnPriorClick(Sender: TObject);
+    procedure BtnRemovePlayListClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,6 +54,24 @@ var
 implementation
 
 {$R *.dfm}
+
+
+// Play File
+function PlayFile(): integer;
+begin
+  Form1.MediaPlayer.Play;
+  Form1.Timer1.Enabled := true;
+
+  // Enable Pause and Stop buttons
+  Form1.BtnPause.Enabled  := true;
+  Form1.BtnStop.Enabled   := true;
+
+  // Disable Play button
+  Form1.BtnPlay.Enabled := false;
+
+  Result := 1;
+end;
+
 
 procedure TForm1.BtnAddFileClick(Sender: TObject);
 begin
@@ -59,22 +88,27 @@ begin
     end
   else
     begin
-      MediaPlayer.Play;
-      Timer1.Enabled := true;
-
-      // Enable Pause and Stop buttons
-      BtnPause.Enabled  := true;
-      BtnStop.Enabled   := true;
-
-      // Disable Play button
-      BtnPlay.Enabled := false;
-
+      // Play
+      PlayFile();
     end
 end;
 
 procedure TForm1.BtnStopClick(Sender: TObject);
 begin
+
+  // Stop and close file
   MediaPlayer.Stop;
+  MediaPlayer.Close;
+
+  // Reset timeline
+  TimeLine.Position := 0;
+
+  // Enable Play button
+  BtnPlay.Enabled := false;
+  BtnPause.Enabled := false;
+  BtnStop.Enabled := false;
+
+  Timer1.Enabled := false;
 end;
 
 procedure TForm1.Info1Click(Sender: TObject);
@@ -113,6 +147,117 @@ begin
       BtnPlay.Enabled := true;
 
     end
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+
+    // Save playlist
+    PlayList.Items.SaveToFile('C:\playlist.txt');
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
+  // Load playlist
+  PlayList.Items.LoadFromFile('C:\playlist.txt');
+
+end;
+
+procedure TForm1.BtnPauseClick(Sender: TObject);
+begin
+  MediaPlayer.Pause;
+  
+  // Enable Play button
+  BtnPlay.Enabled := true;
+end;
+
+procedure TForm1.BtnNextClick(Sender: TObject);
+begin
+
+  if PlayList.ItemIndex+1 < PlayList.Items.Count then
+    begin
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[PlayList.ItemIndex+1];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := PlayList.ItemIndex+1;
+    end
+  else
+    begin
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[0];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := 0;
+    end;
+
+end;
+
+procedure TForm1.BtnPriorClick(Sender: TObject);
+begin
+  if PlayList.ItemIndex > 0 then
+    begin
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[PlayList.ItemIndex-1];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := PlayList.ItemIndex-1;
+    end
+  else
+    begin
+
+      // Open file
+      MediaPlayer.FileName := PlayList.Items.Strings[PlayList.Items.Count-1];
+      MediaPlayer.Open;
+      StatusBar.SimpleText := MediaPlayer.FileName;
+
+      // Init progress bar status
+      TimeLine.Position := 0;
+      TimeLine.Min :=0 ;
+      TimeLine.Max := MediaPlayer.Length;
+
+      // Play
+      PlayFile();
+
+      PlayList.ItemIndex := PlayList.Items.Count-1;
+    end;
+end;
+
+procedure TForm1.BtnRemovePlayListClick(Sender: TObject);
+begin
+  PlayList.Items.Delete(PlayList.ItemIndex);
 end;
 
 end.
