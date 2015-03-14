@@ -4,24 +4,39 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+  Dialogs, StdCtrls, AppEvnts, Unit2, Unit3, Unit4, Unit1;
 
 type
   TForm1 = class(TForm)
     Label1: TLabel;
     LabelUserName: TLabel;
+    ApplicationEvents1: TApplicationEvents;
     procedure FormCreate(Sender: TObject);
     procedure CreateCalcForm(Sender: TObject);
     procedure CreateIMCCalcForm(Sender: TObject);
+    procedure ShowLogForm(Sender: TObject);
+    procedure ApplicationEvents1Exception(Sender: TObject; E: Exception);
+    procedure ApplicationEvents1ActionExecute(Action: TBasicAction;
+      var Handled: Boolean);
+    procedure ApplicationEvents1ActionUpdate(Action: TBasicAction;
+      var Handled: Boolean);
+    procedure ApplicationEvents1Activate(Sender: TObject);
+    procedure ApplicationEvents1Deactivate(Sender: TObject);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
     { Public declarations }
+    username: string;
+    syslog: string;
+    VAR_GLOBAL: TGlobalVar;
   end;
 
 var
   Form1: TForm1;
-  username: string;
+  syslog_list: TStringList;
 
 implementation
 
@@ -45,26 +60,73 @@ end;
 // Create Calc Form
 procedure TForm1.CreateCalcForm(Sender: TObject);
 begin
-     ShowMessage('Calc active!');
+
+  Application.CreateForm(TForm2, Form2);
+  try
+     VAR_GLOBAL.addLog('Open calc form');
+     Form2.VAR_GLOBAL := Self.VAR_GLOBAL;
+     Form2.ShowModal();
+  finally
+    Form2.Release;
+    Form2 := nil;
+  end;
+
 end;
 
 // Create IMC Calc Form
 procedure TForm1.CreateIMCCalcForm(Sender: TObject);
 begin
-     ShowMessage('IMC Calc active!');
+
+  Application.CreateForm(TForm3, Form3);
+  try
+     VAR_GLOBAL.addLog('Open IMC calc form');
+     Form3.VAR_GLOBAL := Self.VAR_GLOBAL;
+     Form3.ShowModal();
+  finally
+    Form3.Release;
+    Form3 := nil;
+  end;
+
 end;
+
+// Show Log Form
+procedure TForm1.ShowLogForm(Sender: TObject);
+begin
+
+  Application.CreateForm(TForm4, Form4);
+  try
+     VAR_GLOBAL.addLog('Open log form');
+     Form4.VAR_GLOBAL := Self.VAR_GLOBAL;
+     Form4.ShowModal();
+  finally
+    Form4.Release;
+    Form4 := nil;
+  end;
+
+end;
+
 
 // Main form create
 procedure TForm1.FormCreate(Sender: TObject);
 var
   btn: TButton;
+  result: integer;
 begin
+
+  // Load log file
+  syslog_list := TStringList.Create;
+  syslog_list.LoadFromFile('log.txt');
+  
+  // New global variables
+  VAR_GLOBAL := TGlobalVar.Create;
 
   // Get user name
   username := getUserNameBox();
+  VAR_GLOBAL.setUserName(username);
+  VAR_GLOBAL.addLog('Usuário '+username+' acessou o sistema');
 
   // Show their name
-  Self.LabelUserName.Caption := 'Hello '+username+'!';
+  Self.LabelUserName.Caption := 'Hello '+VAR_GLOBAL.getUserName+'!';
 
   // Create calc button
   btn := TButton.Create(Self);
@@ -86,7 +148,65 @@ begin
   btn.Caption := 'Calculadora IMC';
   btn.OnClick := Form1.CreateIMCCalcForm;
 
+  // Create Log Button
+  btn := TButton.Create(Self);
+  btn.Parent := Self;
+  btn.top := btn.Height + 65;
+  btn.Left := 10;
+  btn.Width := 273;
+  btn.Height := 35;
+  btn.Caption := 'Show system log';
+  btn.OnClick := Form1.ShowLogForm;
+
+end;
+
+procedure TForm1.ApplicationEvents1Exception(Sender: TObject;
+  E: Exception);
+begin
+  ShowMessage('erro!');
+end;
+
+procedure TForm1.ApplicationEvents1ActionExecute(Action: TBasicAction;
+  var Handled: Boolean);
+begin
+  //ShowMessage('ActionExe');
+end;
+
+procedure TForm1.ApplicationEvents1ActionUpdate(Action: TBasicAction;
+  var Handled: Boolean);
+begin
+  //ShowMessage('ActUpdate');
+end;
+
+procedure TForm1.ApplicationEvents1Activate(Sender: TObject);
+var index: integer;
+begin
+
+  index:=0;
+
+
+  //ShowMessage('On Active');
+  syslog := syslog+'On Active'+#13;
+ 
+
+end;
+
+procedure TForm1.ApplicationEvents1Deactivate(Sender: TObject);
+begin
+  //ShowMessage('On Desa');
+end;
+
+procedure TForm1.ApplicationEvents1Message(var Msg: tagMSG;
+  var Handled: Boolean);
+begin
+  //ShowMessage('on message');
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // Save log to file
+  syslog_list.AddStrings(VAR_GLOBAL.getSystemLog);
+  syslog_list.SaveToFile('log.txt');
 end;
 
 end.
- 
